@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arise Discount Calculator — Cymbiotika</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F7F4EF;
+    --sage: #8A9E8A;
+    --sage-light: #EDF2ED;
+    --sage-dark: #4A6741;
+    --charcoal: #2C2C2A;
+    --muted: #8A8880;
+    --border: #E0DDD7;
+    --white: #FFFFFF;
+    --gold: #B8975A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+  }
+
+  header p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 680px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* LEFT PANEL */
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* TIER SELECTOR */
+  .tier-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 1.75rem;
+  }
+
+  .tier-btn {
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 8px;
+    padding: 10px 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+
+  .tier-btn:hover { border-color: var(--sage); }
+
+  .tier-btn.active {
+    background: var(--sage-light);
+    border-color: var(--sage);
+  }
+
+  .tier-btn .tier-name {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--charcoal);
+  }
+
+  .tier-btn .tier-discount {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .tier-btn.active .tier-name { color: var(--sage-dark); }
+  .tier-btn.active .tier-discount { color: var(--sage); }
+
+  /* PRODUCT SEARCH */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 0.75rem;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    color: var(--charcoal);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-wrap input:focus { border-color: var(--sage); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  .select-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .action-btn {
+    font-size: 0.7rem;
+    color: var(--sage-dark);
+    background: none;
+    border: 1px solid var(--sage);
+    border-radius: 6px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .action-btn:hover { background: var(--sage-light); }
+
+  /* PRODUCT LIST */
+  .product-list {
+    max-height: 380px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .product-list::-webkit-scrollbar { width: 4px; }
+  .product-list::-webkit-scrollbar-track { background: transparent; }
+  .product-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .product-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    user-select: none;
+  }
+
+  .product-item:last-child { border-bottom: none; }
+  .product-item:hover { background: var(--cream); }
+  .product-item.selected { background: var(--sage-light); }
+
+  .product-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--white);
+    background: var(--white);
+    transition: all 0.1s;
+  }
+
+  .product-item.selected .product-check {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+
+  .product-name {
+    flex: 1;
+    font-size: 0.8rem;
+    color: var(--charcoal);
+    line-height: 1.3;
+  }
+
+  .product-price {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .product-item.selected .product-price { color: var(--sage-dark); }
+
+  .no-results {
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* RIGHT PANEL — RESULTS */
+  .results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .result-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .result-card.highlight {
+    background: var(--sage-dark);
+    border-color: var(--sage-dark);
+  }
+
+  .result-card.highlight .section-title { color: rgba(255,255,255,0.5); }
+
+  .big-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.75rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+
+  .result-card.highlight .big-number { color: var(--white); }
+
+  .big-sublabel {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .result-card.highlight .big-sublabel { color: rgba(255,255,255,0.5); }
+
+  .breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-row .b-label { color: var(--muted); }
+  .breakdown-row .b-val { font-weight: 500; color: var(--charcoal); }
+  .breakdown-row.b-final .b-label { color: var(--charcoal); font-weight: 500; }
+  .breakdown-row.b-final .b-val { color: var(--sage-dark); }
+
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+  }
+
+  .empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.3;
+  }
+
+  .empty-state p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .pill {
+    display: inline-block;
+    background: var(--sage-light);
+    color: var(--sage-dark);
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .note {
+    font-size: 0.7rem;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <h1>Arise Discount Calculator</h1>
+    <p>Select a loyalty tier and products to see the combined discount in real time</p>
+  </header>
+
+  <div class="layout">
+
+    <!-- LEFT: INPUTS -->
+    <div class="panel">
+
+      <p class="section-title">1 — Loyalty Tier</p>
+      <div class="tier-row" id="tierRow">
+        <button class="tier-btn" onclick="setTier(0, this)">
+          <span class="tier-name">Member</span>
+          <span class="tier-discount">No loyalty</span>
+        </button>
+        <button class="tier-btn" onclick="setTier(10, this)">
+          <span class="tier-name">Insider</span>
+          <span class="tier-discount">+10% off</span>
+        </button>
+        <button class="tier-btn" onclick="setTier(15, this)">
+          <span class="tier-name">Elite</span>
+          <span class="tier-discount">+15% off</span>
+        </button>
+        <button class="tier-btn active" onclick="setTier(20, this)">
+          <span class="tier-name">VIP</span>
+          <span class="tier-discount">+20% off</span>
+        </button>
+      </div>
+
+      <p class="section-title">2 — Select Products <span class="pill" id="countPill">0 selected</span></p>
+
+      <div class="search-wrap">
+        <span class="search-icon">&#9906;</span>
+        <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()" />
+      </div>
+
+      <div class="select-actions">
+        <button class="action-btn" onclick="selectAll()">Select all</button>
+        <button class="action-btn" onclick="clearAll()">Clear all</button>
+      </div>
+
+      <div class="product-list" id="productList"></div>
+
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="results-panel" id="resultsPanel">
+
+      <div class="result-card" id="emptyState">
+        <div class="empty-state">
+          <div class="empty-icon">◎</div>
+          <p>Select a loyalty tier and at least one product to see the discount breakdown</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+var products = [
+  { name: "Liposomal NAD+", price: 77 },
+  { name: "Shilajit Liquid Complex", price: 66 },
+  { name: "Irish Sea Moss", price: 65 },
+  { name: "Liquid Colostrum", price: 88 },
+  { name: "Liposomal Elderberry", price: 48 },
+  { name: "Liposomal Magnesium Complex", price: 68 },
+  { name: "Liposomal Glutathione", price: 88 },
+  { name: "Liposomal Vitamin C", price: 62 },
+  { name: "Liposomal Brain Complex", price: 62 },
+  { name: "Liposomal Vitamin D3 + K2 + CoQ10", price: 76 },
+  { name: "NMN + Trans-Resveratrol", price: 77 },
+  { name: "Liposomal Advanced Creatine", price: 65 },
+  { name: "Liposomal Vitamin B12 + B6", price: 52 },
+  { name: "Mineral Shilajit", price: 67 },
+  { name: "Metabolic Health", price: 66 },
+  { name: "Probiotic", price: 89 },
+  { name: "ParaX™", price: 92 },
+  { name: "Inflammatory Health", price: 74 },
+  { name: "The Omega", price: 72 },
+  { name: "Super Greens", price: 78 },
+  { name: "Topical Magnesium Oil Spray", price: 36 },
+  { name: "Liposomal Sleep", price: 38 },
+  { name: "Liver Health+", price: 48 },
+  { name: "Organic Matcha Powder", price: 44 },
+  { name: "Molecular Hydrogen", price: 32 }
+];
+
+var selected = new Set();
+var tierDiscount = 20;
+var filteredIndices = products.map(function(_, i) { return i; });
+
+function bundleRate(n) {
+  if (n >= 5) return 30;
+  if (n === 4) return 25;
+  if (n === 3) return 20;
+  if (n === 2) return 15;
+  if (n === 1) return 10;
+  return 0;
+}
+
+function fmt(n) { return '$' + n.toFixed(2); }
+function fmtPct(n) { return n % 1 === 0 ? n + '%' : n.toFixed(1) + '%'; }
+
+function renderProductList() {
+  var list = document.getElementById('productList');
+  var query = document.getElementById('searchInput').value.toLowerCase();
+  filteredIndices = [];
+
+  var html = '';
+  products.forEach(function(p, i) {
+    if (query && p.name.toLowerCase().indexOf(query) === -1) return;
+    filteredIndices.push(i);
+    var sel = selected.has(i);
+    html += '<div class="product-item ' + (sel ? 'selected' : '') + '" onclick="toggle(' + i + ')">' +
+      '<div class="product-check">' + (sel ? '✓' : '') + '</div>' +
+      '<span class="product-name">' + p.name + '</span>' +
+      '<span class="product-price">$' + p.price + '</span>' +
+      '</div>';
+  });
+
+  if (!html) html = '<div class="no-results">No products match your search</div>';
+  list.innerHTML = html;
+}
+
+function toggle(i) {
+  if (selected.has(i)) { selected.delete(i); } else { selected.add(i); }
+  renderProductList();
+  calculate();
+}
+
+function selectAll() {
+  filteredIndices.forEach(function(i) { selected.add(i); });
+  renderProductList();
+  calculate();
+}
+
+function clearAll() {
+  selected.clear();
+  renderProductList();
+  calculate();
+}
+
+function filterProducts() {
+  renderProductList();
+}
+
+function setTier(t, btn) {
+  tierDiscount = t;
+  document.querySelectorAll('.tier-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  calculate();
+}
+
+function calculate() {
+  var count = selected.size;
+  document.getElementById('countPill').textContent = count + ' selected';
+
+  var panel = document.getElementById('resultsPanel');
+
+  if (count === 0) {
+    panel.innerHTML = '<div class="result-card" id="emptyState"><div class="empty-state"><div class="empty-icon">◎</div><p>Select a loyalty tier and at least one product to see the discount breakdown</p></div></div>';
+    return;
+  }
+
+  var msrp = 0;
+  var productLines = '';
+  selected.forEach(function(i) {
+    msrp += products[i].price;
+    productLines += '<div class="breakdown-row"><span class="b-label">' + products[i].name + '</span><span class="b-val">$' + products[i].price + '</span></div>';
+  });
+
+  var bundle = bundleRate(count);
+  var afterBundle = msrp * (1 - bundle / 100);
+  var afterLoyalty = tierDiscount > 0 ? afterBundle * (1 - tierDiscount / 100) : afterBundle;
+  var savings = msrp - afterLoyalty;
+  var effective = msrp > 0 ? (savings / msrp * 100) : 0;
+
+  var tierLabel = ['Member','Insider','Elite','VIP'][[0,10,15,20].indexOf(tierDiscount)];
+  if (!tierLabel) tierLabel = 'VIP';
+
+  var loyaltyLine = tierDiscount > 0
+    ? '<div class="breakdown-row"><span class="b-label">After loyalty discount (' + tierLabel + ' · ' + tierDiscount + '%)</span><span class="b-val">' + fmt(afterLoyalty) + '</span></div>'
+    : '';
+
+  panel.innerHTML =
+    '<div class="result-card highlight">' +
+      '<p class="section-title">Total effective discount</p>' +
+      '<div class="big-number">' + fmtPct(effective) + '</div>' +
+      '<div class="big-sublabel">off MSRP · you pay ' + fmt(afterLoyalty) + '</div>' +
+    '</div>' +
+
+    '<div class="result-card">' +
+      '<p class="section-title">Breakdown</p>' +
+      '<div class="breakdown-list">' +
+        '<div class="breakdown-row"><span class="b-label">MSRP total (' + count + ' product' + (count > 1 ? 's' : '') + ')</span><span class="b-val">' + fmt(msrp) + '</span></div>' +
+        '<div class="breakdown-row"><span class="b-label">Bundle discount (' + bundle + '%)</span><span class="b-val">' + fmt(afterBundle) + '</span></div>' +
+        loyaltyLine +
+        '<div class="breakdown-row b-final"><span class="b-label">You save</span><span class="b-val">' + fmt(savings) + '</span></div>' +
+      '</div>' +
+      '<p class="note">Bundle and loyalty discounts apply to subscription items only and are applied sequentially. Does not include additional promo codes.</p>' +
+    '</div>' +
+
+    '<div class="result-card">' +
+      '<p class="section-title">Selected products</p>' +
+      '<div class="breakdown-list">' + productLines + '</div>' +
+    '</div>';
+}
+
+// Init
+renderProductList();
+calculate();
+</script>
+</body>
+</html>
