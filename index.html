@@ -351,7 +351,7 @@
 
   <header>
     <h1>Arise Discount Calculator</h1>
-    <p>Select a loyalty tier and products to see the combined discount in real time</p>
+    <p>Select a loyalty tier, products, and any additional promo discount to see the full breakdown in real time</p>
   </header>
 
   <div class="layout">
@@ -392,6 +392,29 @@
       </div>
 
       <div class="product-list" id="productList"></div>
+
+      <div style="margin-top: 1.75rem;">
+        <p class="section-title">3 — Additional Discount (optional)</p>
+        <p style="font-size: 0.75rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.5;">e.g. BRECKA20, SAVE20APR — applied after bundle and loyalty discounts</p>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="position: relative; flex: 1;">
+            <input
+              type="number"
+              id="extraDiscount"
+              min="0"
+              max="100"
+              step="1"
+              placeholder="0"
+              oninput="calculate()"
+              style="width: 100%; padding: 9px 32px 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--charcoal); background: var(--cream); outline: none; transition: border-color 0.15s;"
+              onfocus="this.style.borderColor='var(--sage)'"
+              onblur="this.style.borderColor='var(--border)'"
+            />
+            <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--muted); pointer-events: none;">%</span>
+          </div>
+          <button class="action-btn" onclick="document.getElementById('extraDiscount').value=''; calculate();" style="white-space: nowrap;">Clear</button>
+        </div>
+      </div>
 
     </div>
 
@@ -526,7 +549,10 @@ function calculate() {
   var bundle = bundleRate(count);
   var afterBundle = msrp * (1 - bundle / 100);
   var afterLoyalty = tierDiscount > 0 ? afterBundle * (1 - tierDiscount / 100) : afterBundle;
-  var savings = msrp - afterLoyalty;
+  var extraDiscount = parseFloat(document.getElementById('extraDiscount').value) || 0;
+  extraDiscount = Math.min(Math.max(extraDiscount, 0), 100);
+  var afterExtra = extraDiscount > 0 ? afterLoyalty * (1 - extraDiscount / 100) : afterLoyalty;
+  var savings = msrp - afterExtra;
   var effective = msrp > 0 ? (savings / msrp * 100) : 0;
 
   var tierLabel = ['Member','Insider','Elite','VIP'][[0,10,15,20].indexOf(tierDiscount)];
@@ -536,22 +562,27 @@ function calculate() {
     ? '<div class="breakdown-row"><span class="b-label">After loyalty discount (' + tierLabel + ' · ' + tierDiscount + '%)</span><span class="b-val">' + fmt(afterLoyalty) + '</span></div>'
     : '';
 
+  var extraLine = extraDiscount > 0
+    ? '<div class="breakdown-row"><span class="b-label">After additional discount (' + extraDiscount + '%)</span><span class="b-val">' + fmt(afterExtra) + '</span></div>'
+    : '';
+
   panel.innerHTML =
     '<div class="result-card highlight">' +
       '<p class="section-title">Total effective discount</p>' +
       '<div class="big-number">' + fmtPct(effective) + '</div>' +
-      '<div class="big-sublabel">off MSRP · you pay ' + fmt(afterLoyalty) + '</div>' +
+      '<div class="big-sublabel">off MSRP · you pay ' + fmt(afterExtra) + '</div>' +
     '</div>' +
 
     '<div class="result-card">' +
       '<p class="section-title">Breakdown</p>' +
       '<div class="breakdown-list">' +
         '<div class="breakdown-row"><span class="b-label">MSRP total (' + count + ' product' + (count > 1 ? 's' : '') + ')</span><span class="b-val">' + fmt(msrp) + '</span></div>' +
-        '<div class="breakdown-row"><span class="b-label">Bundle discount (' + bundle + '%)</span><span class="b-val">' + fmt(afterBundle) + '</span></div>' +
+        '<div class="breakdown-row"><span class="b-label">After bundle discount (' + bundle + '%)</span><span class="b-val">' + fmt(afterBundle) + '</span></div>' +
         loyaltyLine +
+        extraLine +
         '<div class="breakdown-row b-final"><span class="b-label">You save</span><span class="b-val">' + fmt(savings) + '</span></div>' +
       '</div>' +
-      '<p class="note">Bundle and loyalty discounts apply to subscription items only and are applied sequentially. Does not include additional promo codes.</p>' +
+      '<p class="note">Discounts are applied sequentially: bundle first, then loyalty tier, then additional promo code. Applies to subscription items only.</p>' +
     '</div>' +
 
     '<div class="result-card">' +
