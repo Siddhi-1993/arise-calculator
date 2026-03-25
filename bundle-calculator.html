@@ -213,27 +213,25 @@ function calculate(){
       }
     });
 
-    /* If next product chosen, compute preview */
+    /* If next product chosen, show only that product's discounted price at next tier */
     var previewHtml='';
     if(nextProductIndex!==null&&!selected.has(nextProductIndex)){
       var addedPrice=products[nextProductIndex].price;
-      var newMsrp=msrp+addedPrice;
       var newBundle=bundleRate(nextItems);
-      var newAfterBundle=newMsrp*(1-newBundle/100);
-      var newAfterExtra=extra>0?newAfterBundle*(1-extra/100):newAfterBundle;
-      var newSavings=newMsrp-newAfterExtra;
-      var newEffective=newMsrp>0?(newSavings/newMsrp*100):0;
-      var extraSaved=afterExtra-newAfterExtra;
+      /* Price of just that one product at the next bundle tier + extra discount */
+      var productAfterBundle=addedPrice*(1-newBundle/100);
+      var productFinal=extra>0?productAfterBundle*(1-extra/100):productAfterBundle;
+      var productSavings=addedPrice-productFinal;
+      var productEffective=(productSavings/addedPrice*100);
 
       previewHtml=
         '<div class="next-breakdown">'
-          +'<div class="next-b-row"><span class="next-b-label">New MSRP total</span><span class="next-b-val">'+fmt(newMsrp)+'</span></div>'
-          +'<div class="next-b-row"><span class="next-b-label">After bundle discount ('+newBundle+'%)</span><span class="next-b-val">'+fmt(newAfterBundle)+'</span></div>'
-          +(extra>0?'<div class="next-b-row"><span class="next-b-label">After additional discount ('+extra+'%)</span><span class="next-b-val">'+fmt(newAfterExtra)+'</span></div>':'')
-          +'<div class="next-b-row next-final"><span class="next-b-label">You pay</span><span class="next-b-val">'+fmt(newAfterExtra)+'</span></div>'
-          +'<div class="next-b-row next-final"><span class="next-b-label">Total effective discount</span><span class="next-b-val">'+fmtPct(newEffective)+'</span></div>'
-        +'</div>'
-        +'<p class="next-hint">That\'s '+fmt(extraSaved)+' more saved vs. your current cart.</p>';
+          +'<div class="next-b-row"><span class="next-b-label">'+products[nextProductIndex].name+' MSRP</span><span class="next-b-val">'+fmt(addedPrice)+'</span></div>'
+          +'<div class="next-b-row"><span class="next-b-label">After bundle discount ('+newBundle+'%)</span><span class="next-b-val">'+fmt(productAfterBundle)+'</span></div>'
+          +(extra>0?'<div class="next-b-row"><span class="next-b-label">After additional discount ('+extra+'%)</span><span class="next-b-val">'+fmt(productFinal)+'</span></div>':'')
+          +'<div class="next-b-row next-final"><span class="next-b-label">You pay for this product</span><span class="next-b-val">'+fmt(productFinal)+'</span></div>'
+          +'<div class="next-b-row next-final"><span class="next-b-label">You save</span><span class="next-b-val">'+fmt(productSavings)+' ('+fmtPct(productEffective)+')</span></div>'
+        +'</div>';
     } else if(nextProductIndex!==null&&selected.has(nextProductIndex)){
       /* Edge case: selected product was added to cart after being picked in dropdown */
       nextProductIndex=null;
