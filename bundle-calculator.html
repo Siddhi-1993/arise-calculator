@@ -6,20 +6,23 @@
 <title>Bundle Discount Calculator — Cymbiotika</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-  :root { --cream:#F7F4EF; --sage:#8A9E8A; --sage-light:#EDF2ED; --sage-dark:#4A6741; --charcoal:#2C2C2A; --muted:#8A8880; --border:#E0DDD7; --white:#FFFFFF; --gold:#B8975A; --gold-light:#F7F1E8; --gold-border:#D4AC6E; }
+  :root{--cream:#F7F4EF;--sage:#8A9E8A;--sage-light:#EDF2ED;--sage-dark:#4A6741;--charcoal:#2C2C2A;--muted:#8A8880;--border:#E0DDD7;--white:#FFFFFF;--gold:#B8975A;--gold-light:#F7F1E8;--gold-border:#D4AC6E;--blue:#5B7FBB;--blue-light:#E8EEFF;--blue-border:#8AA3CC;--blue-text:#3B5A99;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;padding:2rem 1rem 4rem;}
-  .page-wrap{max-width:860px;margin:0 auto;}
-  header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
+  .page-wrap{max-width:920px;margin:0 auto;}
+  header{text-align:center;margin-bottom:2rem;padding-bottom:1.75rem;border-bottom:1px solid var(--border);}
   header h1{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:400;letter-spacing:-0.01em;margin-bottom:0.4rem;}
   header p{font-size:0.875rem;color:var(--muted);font-weight:300;}
+  .country-bar{display:flex;gap:4px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:1.5rem;max-width:300px;margin-left:auto;margin-right:auto;}
+  .country-btn{flex:1;padding:8px 12px;border:none;border-radius:7px;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.15s;text-align:center;}
+  .country-btn.active{background:var(--sage-dark);color:var(--white);}
   .bundle-banner{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
   .banner-label{font-size:0.68rem;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);white-space:nowrap;}
   .tier-pills{display:flex;gap:6px;flex:1;flex-wrap:wrap;}
   .tier-pill{font-size:0.72rem;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--cream);color:var(--muted);white-space:nowrap;transition:all 0.15s;}
   .tier-pill.active{background:var(--sage-light);border-color:var(--sage);color:var(--sage-dark);font-weight:500;}
   .layout{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start;}
-  @media(max-width:680px){.layout{grid-template-columns:1fr;}}
+  @media(max-width:700px){.layout{grid-template-columns:1fr;}}
   .panel{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
   .section-title{font-size:0.68rem;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.875rem;}
   .search-wrap{position:relative;margin-bottom:0.75rem;}
@@ -29,28 +32,56 @@
   .select-actions{display:flex;gap:8px;margin-bottom:0.75rem;}
   .action-btn{font-size:0.7rem;color:var(--sage-dark);background:none;border:1px solid var(--sage);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;}
   .action-btn:hover{background:var(--sage-light);}
-  .product-list{max-height:380px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
+  .product-list{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
   .product-list::-webkit-scrollbar{width:4px;} .product-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-  .product-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);transition:background 0.1s;}
-  .product-item:last-child{border-bottom:none;} .product-item:hover{background:var(--cream);} .product-item.selected{background:var(--sage-light);}
+
+  /* PRODUCT ROW */
+  .product-item{display:grid;grid-template-columns:18px 1fr auto auto;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);transition:background 0.1s;}
+  .product-item:last-child{border-bottom:none;}
+  .product-item:hover{background:var(--cream);}
+  .product-item.has-selection{background:#FAFCFA;}
   .product-check{width:15px;height:15px;border-radius:4px;border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--white);background:var(--white);cursor:pointer;transition:all 0.1s;}
-  .product-item.selected .product-check{background:var(--sage);border-color:var(--sage);}
-  .product-name{flex:1;font-size:0.75rem;color:var(--charcoal);line-height:1.3;cursor:pointer;}
-  .product-price{font-size:0.75rem;font-weight:500;color:var(--muted);white-space:nowrap;}
-  .product-item.selected .product-price{color:var(--sage-dark);}
-  .qty-controls{display:none;align-items:center;gap:4px;flex-shrink:0;}
-  .product-item.selected .qty-controls{display:flex;}
-  .qty-btn{width:22px;height:22px;border:1px solid var(--sage);border-radius:5px;background:var(--white);color:var(--sage-dark);font-size:0.9rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.1s;padding:0;font-family:'DM Sans',sans-serif;}
-  .qty-btn:hover{background:var(--sage-light);}
-  .qty-num{font-size:0.78rem;font-weight:500;color:var(--charcoal);min-width:18px;text-align:center;}
+  .product-item.has-selection .product-check{background:var(--sage);border-color:var(--sage);}
+  .product-name{font-size:0.75rem;color:var(--charcoal);line-height:1.3;cursor:pointer;}
+
+  /* DUAL QTY CONTROLS */
+  .dual-qty{display:flex;gap:6px;align-items:center;}
+  .qty-group{display:flex;align-items:center;gap:0;}
+  .qty-group-label{font-size:0.62rem;font-weight:500;padding:2px 5px;border-radius:4px 0 0 4px;border:1px solid var(--border);border-right:none;white-space:nowrap;line-height:1.6;}
+  .qty-group-label.sub-label{background:var(--sage-light);color:var(--sage-dark);border-color:var(--sage);}
+  .qty-group-label.otp-label{background:var(--blue-light);color:var(--blue-text);border-color:var(--blue-border);}
+  .qty-inner{display:flex;align-items:center;border:1px solid var(--border);border-radius:0 4px 4px 0;}
+  .qty-group-label.sub-label ~ .qty-inner{border-color:var(--sage);}
+  .qty-group-label.otp-label ~ .qty-inner{border-color:var(--blue-border);}
+  .qty-btn{width:20px;height:22px;border:none;background:transparent;color:var(--muted);font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:'DM Sans',sans-serif;transition:all 0.1s;}
+  .qty-btn:hover{background:var(--cream);color:var(--charcoal);}
+  .qty-num{font-size:0.75rem;font-weight:500;color:var(--charcoal);min-width:18px;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border);height:22px;display:flex;align-items:center;justify-content:center;}
+  .qty-num.zero{color:var(--muted);}
+  .product-price{font-size:0.72rem;font-weight:500;color:var(--muted);white-space:nowrap;text-align:right;}
+  .product-item.has-selection .product-price{color:var(--sage-dark);}
+
   .no-results{padding:1.5rem;text-align:center;font-size:0.78rem;color:var(--muted);}
+  .col-header{display:grid;grid-template-columns:18px 1fr auto auto;gap:8px;padding:5px 10px 4px;border-bottom:1px solid var(--border);}
+  .col-header span{font-size:0.62rem;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);}
+  .col-header .col-qty{display:flex;gap:6px;}
+  .col-header .col-sub{color:var(--sage-dark);}
+  .col-header .col-otp{color:var(--blue-text);}
+
+  /* EXTRA DISCOUNT */
   .extra-wrap{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);}
-  .extra-hint{font-size:0.72rem;color:var(--muted);margin-bottom:0.6rem;line-height:1.5;}
-  .extra-row{display:flex;align-items:center;gap:8px;}
+  .extra-hint{font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.5;}
+  .extra-pct-row{display:flex;align-items:center;gap:8px;margin-bottom:0.875rem;}
   .extra-input-wrap{position:relative;flex:1;}
   .extra-input-wrap input{width:100%;padding:9px 28px 9px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:var(--charcoal);background:var(--cream);outline:none;transition:border-color 0.15s;}
   .extra-input-wrap input:focus{border-color:var(--sage);}
   .extra-pct{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0.8rem;color:var(--muted);pointer-events:none;}
+  .apply-to-label{font-size:0.68rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.5rem;}
+  .apply-to-row{display:flex;gap:8px;}
+  .apply-btn{flex:1;padding:7px 8px;border:1px solid var(--border);border-radius:8px;background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.15s;}
+  .apply-btn:hover{border-color:var(--sage);}
+  .apply-btn.active{background:var(--sage-light);border-color:var(--sage);color:var(--sage-dark);}
+
+  /* RESULTS */
   .results-panel{display:flex;flex-direction:column;gap:1rem;position:sticky;top:1.5rem;}
   .result-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
   .result-card.highlight{background:var(--sage-dark);border-color:var(--sage-dark);}
@@ -62,94 +93,135 @@
   .big-sublabel{font-size:0.72rem;color:var(--muted);}
   .result-card.highlight .big-sublabel{color:rgba(255,255,255,0.5);}
   .breakdown-list{display:flex;flex-direction:column;}
-  .b-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:0.78rem;border-bottom:1px solid var(--border);}
+  .b-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.78rem;border-bottom:1px solid var(--border);}
   .b-row:last-child{border-bottom:none;} .b-label{color:var(--muted);} .b-val{font-weight:500;color:var(--charcoal);}
   .b-row.b-final .b-label{color:var(--charcoal);font-weight:500;} .b-row.b-final .b-val{color:var(--sage-dark);}
-  .next-big{font-size:1.5rem;font-family:'DM Serif Display',serif;font-weight:400;color:var(--gold);margin-bottom:2px;}
-  .next-sub{font-size:0.72rem;color:var(--gold);opacity:0.85;margin-bottom:0.75rem;}
+  .b-row.b-sub-total .b-label{color:var(--charcoal);font-style:italic;font-size:0.72rem;} .b-row.b-sub-total .b-val{color:var(--sage-dark);font-size:0.72rem;}
+  .b-row.b-otp-total .b-label{color:var(--blue-text);font-style:italic;font-size:0.72rem;} .b-row.b-otp-total .b-val{color:var(--blue-text);font-size:0.72rem;}
+  .b-divider{border-top:1px dashed var(--border);margin:4px 0;}
+  .b-section-head{font-size:0.65rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 2px;color:var(--muted);}
   .next-select-label{font-size:0.68rem;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;}
-  .next-select{width:100%;padding:7px 10px;border:1px solid var(--gold-border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--charcoal);background:var(--white);outline:none;cursor:pointer;margin-bottom:0.75rem;transition:border-color 0.15s;}
-  .next-select:focus{border-color:var(--gold);}
+  .next-select{width:100%;padding:7px 10px;border:1px solid var(--gold-border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--charcoal);background:var(--white);outline:none;cursor:pointer;margin-bottom:0.75rem;}
   .next-breakdown{display:flex;flex-direction:column;border:1px solid var(--gold-border);border-radius:8px;overflow:hidden;}
   .next-b-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;font-size:0.75rem;border-bottom:1px solid var(--gold-border);background:rgba(255,255,255,0.6);}
-  .next-b-row:last-child{border-bottom:none;}
-  .next-b-label{color:var(--muted);}
-  .next-b-val{font-weight:500;color:var(--charcoal);}
+  .next-b-row:last-child{border-bottom:none;} .next-b-label{color:var(--muted);} .next-b-val{font-weight:500;color:var(--charcoal);}
   .next-b-row.next-final{background:rgba(184,151,90,0.08);}
-  .next-b-row.next-final .next-b-label{color:var(--gold);font-weight:500;}
-  .next-b-row.next-final .next-b-val{color:var(--gold);}
-  .next-hint{font-size:0.68rem;color:var(--gold);opacity:0.75;margin-top:0.5rem;line-height:1.5;}
+  .next-b-row.next-final .next-b-label{color:var(--gold);font-weight:500;} .next-b-row.next-final .next-b-val{color:var(--gold);}
   .at-max{font-size:0.78rem;color:var(--sage-dark);font-weight:500;text-align:center;padding:0.5rem 0;}
   .empty-state{text-align:center;padding:2.5rem 1rem;}
   .empty-icon{font-size:1.75rem;margin-bottom:0.75rem;opacity:0.25;}
   .empty-state p{font-size:0.78rem;color:var(--muted);line-height:1.6;}
   .pill{display:inline-block;background:var(--sage-light);color:var(--sage-dark);font-size:0.63rem;font-weight:500;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;}
   .calc-note{font-size:0.68rem;color:var(--muted);line-height:1.6;padding-top:0.5rem;border-top:1px solid var(--border);margin-top:0.5rem;}
+  .price-note{background:var(--gold-light);border:1px solid var(--gold-border);border-radius:8px;padding:8px 12px;font-size:0.7rem;color:var(--gold);margin-bottom:1rem;line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="page-wrap">
   <header>
     <h1>Bundle Discount Calculator</h1>
-    <p>Select subscription products and quantities — and preview what you unlock by adding one more</p>
+    <p>Set subscription and one-time quantities per product — discount calculated automatically</p>
   </header>
 
+  <div class="country-bar">
+    <button class="country-btn active" id="btnUS" onclick="switchCountry('US')">🇺🇸 United States</button>
+    <button class="country-btn" id="btnCA" onclick="switchCountry('CA')">🇨🇦 Canada</button>
+  </div>
+  <div class="price-note" id="caNote" style="display:none;">⚠️ CA prices are in CAD and estimated from the spring sale page. Please verify MSRPs before sharing externally.</div>
+
   <div class="bundle-banner">
-    <span class="banner-label">Current tier</span>
+    <span class="banner-label">Current sub tier</span>
     <div class="tier-pills">
-      <span class="tier-pill" id="pill1">1 item · 10% off</span>
-      <span class="tier-pill" id="pill2">2 items · 15% off</span>
-      <span class="tier-pill" id="pill3">3 items · 20% off</span>
-      <span class="tier-pill" id="pill4">4 items · 25% off</span>
-      <span class="tier-pill" id="pill5">5+ items · 30% off</span>
+      <span class="tier-pill" id="pill1">1 · 10% off</span>
+      <span class="tier-pill" id="pill2">2 · 15% off</span>
+      <span class="tier-pill" id="pill3">3 · 20% off</span>
+      <span class="tier-pill" id="pill4">4 · 25% off</span>
+      <span class="tier-pill" id="pill5">5+ · 30% off</span>
     </div>
   </div>
 
   <div class="layout">
     <div class="panel">
-      <p class="section-title">Select products & quantities <span class="pill" id="countPill">0 items</span></p>
+      <p class="section-title">Products <span class="pill" id="countPill">0 selected</span></p>
       <div class="search-wrap"><span class="search-icon">&#9906;</span><input type="text" id="searchInput" placeholder="Search products..." oninput="renderProducts()"/></div>
-      <div class="select-actions"><button class="action-btn" onclick="selectAll()">Select all</button><button class="action-btn" onclick="clearAll()">Clear all</button></div>
-      <div class="product-list" id="productList"></div>
+      <div class="select-actions">
+        <button class="action-btn" onclick="selectAll()">Add all as sub</button>
+        <button class="action-btn" onclick="clearAll()">Clear all</button>
+      </div>
+      <div class="product-list">
+        <div class="col-header">
+          <span></span><span>Product</span>
+          <div class="col-qty"><span class="col-sub">Sub qty</span><span class="col-otp">OTP qty</span></div>
+          <span>MSRP</span>
+        </div>
+        <div id="productList"></div>
+      </div>
 
       <div class="extra-wrap">
         <p class="section-title">Additional discount (optional)</p>
         <p class="extra-hint">e.g. BRECKA20, SAVE20APR — applied after bundle discount</p>
-        <div class="extra-row">
+        <div class="extra-pct-row">
           <div class="extra-input-wrap">
             <input type="number" id="extraDiscount" min="0" max="100" step="1" placeholder="0" oninput="calculate()" onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'"/>
             <span class="extra-pct">%</span>
           </div>
           <button class="action-btn" onclick="document.getElementById('extraDiscount').value='';calculate();">Clear</button>
         </div>
+        <p class="apply-to-label">Applies to</p>
+        <div class="apply-to-row">
+          <button class="apply-btn active" id="applysubBtn" onclick="setApply('sub')">Subscriptions only</button>
+          <button class="apply-btn" id="applyotpBtn" onclick="setApply('otp')">One-time only</button>
+          <button class="apply-btn" id="applybothBtn" onclick="setApply('both')">Both</button>
+        </div>
       </div>
     </div>
 
     <div class="results-panel" id="resultsPanel">
-      <div class="result-card"><div class="empty-state"><div class="empty-icon">◎</div><p>Select at least one subscription product to see the bundle discount</p></div></div>
+      <div class="result-card"><div class="empty-state"><div class="empty-icon">◎</div><p>Add subscription quantities to see the bundle discount</p></div></div>
     </div>
   </div>
 </div>
 
 <script>
-var products=[{name:"Liposomal NAD+",price:77},{name:"Shilajit Liquid Complex",price:66},{name:"Irish Sea Moss",price:65},{name:"Liquid Colostrum",price:88},{name:"Liposomal Elderberry",price:48},{name:"Liposomal Magnesium Complex",price:68},{name:"Liposomal Glutathione",price:88},{name:"Liposomal Vitamin C",price:62},{name:"Liposomal Brain Complex",price:62},{name:"Liposomal Vitamin D3 + K2 + CoQ10",price:76},{name:"NMN + Trans-Resveratrol",price:77},{name:"Liposomal Advanced Creatine",price:65},{name:"Liposomal Vitamin B12 + B6",price:52},{name:"Mineral Shilajit",price:67},{name:"Metabolic Health",price:66},{name:"Probiotic",price:89},{name:"ParaX™",price:92},{name:"Inflammatory Health",price:74},{name:"The Omega",price:72},{name:"Super Greens",price:78},{name:"Topical Magnesium Oil Spray",price:36},{name:"Liposomal Sleep",price:38},{name:"Liver Health+",price:48},{name:"Organic Matcha Powder",price:44},{name:"Molecular Hydrogen",price:32}];
+var productsUS=[{name:"Liposomal NAD+",price:77},{name:"Shilajit Liquid Complex",price:66},{name:"Irish Sea Moss",price:65},{name:"Liquid Colostrum",price:88},{name:"Liposomal Elderberry",price:48},{name:"Liposomal Magnesium Complex",price:68},{name:"Liposomal Glutathione",price:88},{name:"Liposomal Vitamin C",price:62},{name:"Liposomal Brain Complex",price:62},{name:"Liposomal Vitamin D3 + K2 + CoQ10",price:76},{name:"NMN + Trans-Resveratrol",price:77},{name:"Liposomal Advanced Creatine",price:65},{name:"Liposomal Vitamin B12 + B6",price:52},{name:"Mineral Shilajit",price:67},{name:"Metabolic Health",price:66},{name:"Probiotic",price:89},{name:"ParaX™",price:92},{name:"Inflammatory Health",price:74},{name:"The Omega",price:72},{name:"Super Greens",price:78},{name:"Topical Magnesium Oil Spray",price:36},{name:"Liposomal Sleep",price:38},{name:"Liver Health+",price:48},{name:"Organic Matcha Powder",price:44},{name:"Molecular Hydrogen",price:32}];
+var productsCA=[{name:"Liposomal Glutathione",price:115},{name:"Liposomal Magnesium L-Threonate",price:89},{name:"Liposomal Vitamin C",price:81},{name:"Liquid Colostrum",price:115},{name:"Liposomal Elderberry",price:63},{name:"Liposomal Vitamin D3 + K2 + CoQ10",price:101},{name:"Irish Sea Moss",price:85},{name:"Shilajit Liquid Complex",price:86},{name:"Metabolic Health",price:86},{name:"Liposomal Vitamin B12 + B6",price:63},{name:"ParaX™",price:120},{name:"Golden Mind",price:81},{name:"Mineral Shilajit",price:88},{name:"Liposomal Longevity Mushrooms",price:79},{name:"Molecular Hydrogen",price:42},{name:"Topical Magnesium Oil Spray",price:47},{name:"Liposomal Advanced Creatine",price:85},{name:"Liver Health+",price:63},{name:"Liposomal Sleep",price:50},{name:"NMN + Trans-Resveratrol",price:101},{name:"Inflammatory Health",price:97},{name:"Probiotic",price:116},{name:"Super Greens",price:102},{name:"The Omega",price:94},{name:"Liposomal Brain Complex",price:87}];
 
-var selected=new Map(); /* Map<productIndex, qty> — total qty drives bundle tier */
-var filteredIndices=[];
-var nextProductIndex=null; /* which product is previewed in the next-tier card */
+var country='US'; var products=productsUS;
+/* items = Map<index, {sub:qty, otp:qty}> */
+var items=new Map(); var filteredIndices=[]; var applyTo='sub'; var nextProductIndex=null;
 
+function switchCountry(c){country=c;products=(c==='CA')?productsCA:productsUS;items.clear();nextProductIndex=null;document.getElementById('btnUS').classList.toggle('active',c==='US');document.getElementById('btnCA').classList.toggle('active',c==='CA');document.getElementById('caNote').style.display=c==='CA'?'block':'none';document.getElementById('searchInput').value='';renderProducts();}
 function bundleRate(n){return n>=5?30:n===4?25:n===3?20:n===2?15:n===1?10:0;}
-function totalItems(){var t=0;selected.forEach(function(q){t+=q;});return t;}
-function totalMsrp(){var m=0;selected.forEach(function(q,i){m+=products[i].price*q;});return m;}
 function fmt(n){return'$'+n.toFixed(2);}
 function fmtPct(n){return(n%1===0?n:parseFloat(n.toFixed(1)))+'%';}
+function totalSub(){var t=0;items.forEach(function(v){t+=v.sub;});return t;}
+function subMsrp(){var m=0;items.forEach(function(v,i){m+=products[i].price*v.sub;});return m;}
+function otpMsrp(){var m=0;items.forEach(function(v,i){m+=products[i].price*v.otp;});return m;}
+function updateBanner(n){var rate=bundleRate(n);var map={10:'pill1',15:'pill2',20:'pill3',25:'pill4',30:'pill5'};['pill1','pill2','pill3','pill4','pill5'].forEach(function(id){document.getElementById(id).classList.remove('active');});if(rate>0&&map[rate])document.getElementById(map[rate]).classList.add('active');}
 
-function updateBanner(items){
-  var rate=bundleRate(items);
-  var map={10:'pill1',15:'pill2',20:'pill3',25:'pill4',30:'pill5'};
-  ['pill1','pill2','pill3','pill4','pill5'].forEach(function(id){document.getElementById(id).classList.remove('active');});
-  if(rate>0&&map[rate])document.getElementById(map[rate]).classList.add('active');
+function setApply(mode){applyTo=mode;['sub','otp','both'].forEach(function(m){document.getElementById('apply'+m+'Btn').classList.toggle('active',m===mode);});calculate();}
+function setNextProduct(val){nextProductIndex=val===''?null:parseInt(val);calculate();}
+
+function getItem(i){return items.has(i)?items.get(i):{sub:0,otp:0};}
+
+function changeQty(i,type,delta){
+  var v=getItem(i);
+  v[type]=Math.max(0,v[type]+delta);
+  if(v.sub===0&&v.otp===0){items.delete(i);}else{items.set(i,v);}
+  renderProducts();
 }
+
+function toggleRow(i){
+  if(items.has(i)){items.delete(i);}
+  else{items.set(i,{sub:1,otp:0});}
+  renderProducts();
+}
+
+function selectAll(){
+  filteredIndices.forEach(function(i){if(!items.has(i))items.set(i,{sub:1,otp:0});});
+  renderProducts();
+}
+function clearAll(){items.clear();nextProductIndex=null;renderProducts();}
 
 function renderProducts(){
   var query=document.getElementById('searchInput').value.toLowerCase();
@@ -157,104 +229,112 @@ function renderProducts(){
   products.forEach(function(p,i){
     if(query&&p.name.toLowerCase().indexOf(query)===-1)return;
     filteredIndices.push(i);
-    var sel=selected.has(i);var qty=sel?selected.get(i):1;
-    var qtyHtml=sel?'<div class="qty-controls"><button class="qty-btn" onclick="event.stopPropagation();changeQty('+i+',-1)">−</button><span class="qty-num">'+qty+'</span><button class="qty-btn" onclick="event.stopPropagation();changeQty('+i+',1)">+</button></div>':'';
-    html+='<div class="product-item'+(sel?' selected':'')+'"><div class="product-check" onclick="toggle('+i+')">'+(sel?'✓':'')+'</div><span class="product-name" onclick="toggle('+i+')">'+p.name+'</span>'+qtyHtml+'<span class="product-price">$'+p.price+'</span></div>';
+    var sel=items.has(i);var v=getItem(i);
+    var hasSel=sel||(v.sub>0||v.otp>0);
+    html+='<div class="product-item'+(hasSel?' has-selection':'')+'">'
+      +'<div class="product-check" onclick="toggleRow('+i+')">'+(hasSel?'✓':'')+'</div>'
+      +'<span class="product-name" onclick="toggleRow('+i+')">'+p.name+'</span>'
+      +'<div class="dual-qty">'
+        +'<div class="qty-group">'
+          +'<span class="qty-group-label sub-label">Sub</span>'
+          +'<div class="qty-inner">'
+            +'<button class="qty-btn" onclick="changeQty('+i+',\'sub\',-1)">−</button>'
+            +'<span class="qty-num'+(v.sub===0?' zero':'')+'">'+v.sub+'</span>'
+            +'<button class="qty-btn" onclick="changeQty('+i+',\'sub\',1)">+</button>'
+          +'</div>'
+        +'</div>'
+        +'<div class="qty-group">'
+          +'<span class="qty-group-label otp-label">OTP</span>'
+          +'<div class="qty-inner">'
+            +'<button class="qty-btn" onclick="changeQty('+i+',\'otp\',-1)">−</button>'
+            +'<span class="qty-num'+(v.otp===0?' zero':'')+'">'+v.otp+'</span>'
+            +'<button class="qty-btn" onclick="changeQty('+i+',\'otp\',1)">+</button>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+      +'<span class="product-price">$'+p.price+'</span>'
+    +'</div>';
   });
   document.getElementById('productList').innerHTML=html||'<div class="no-results">No products match</div>';
-  calculate();
-}
-
-function toggle(i){selected.has(i)?selected.delete(i):selected.set(i,1);renderProducts();}
-function changeQty(i,d){if(!selected.has(i))return;selected.set(i,Math.max(1,selected.get(i)+d));renderProducts();}
-function selectAll(){filteredIndices.forEach(function(i){if(!selected.has(i))selected.set(i,1);});renderProducts();}
-function clearAll(){selected.clear();nextProductIndex=null;renderProducts();}
-
-/* Called when user picks a product in the next-tier dropdown */
-function setNextProduct(val){
-  nextProductIndex=val===''?null:parseInt(val);
+  var total=0;items.forEach(function(){total++;});
+  document.getElementById('countPill').textContent=total+' selected';
   calculate();
 }
 
 function calculate(){
-  var items=totalItems();
-  document.getElementById('countPill').textContent=items+' item'+(items!==1?'s':'');
-  updateBanner(items);
+  var sItems=totalSub(); var sMsrp=subMsrp(); var oMsrp=otpMsrp();
+  updateBanner(sItems);
   var panel=document.getElementById('resultsPanel');
-  if(items===0){panel.innerHTML='<div class="result-card"><div class="empty-state"><div class="empty-icon">◎</div><p>Select at least one subscription product to see the bundle discount</p></div></div>';return;}
+  var hasAny=sItems>0||oMsrp>0;
+  if(!hasAny){panel.innerHTML='<div class="result-card"><div class="empty-state"><div class="empty-icon">◎</div><p>Add subscription or one-time quantities to see the discount breakdown</p></div></div>';return;}
 
-  var msrp=totalMsrp();
-  var bundle=bundleRate(items);
-  var afterBundle=msrp*(1-bundle/100);
   var extra=Math.min(Math.max(parseFloat(document.getElementById('extraDiscount').value)||0,0),100);
-  var afterExtra=extra>0?afterBundle*(1-extra/100):afterBundle;
-  var savings=msrp-afterExtra;
-  var effective=msrp>0?(savings/msrp*100):0;
+  var bundle=bundleRate(sItems);
+  var sAfterBundle=sItems>0?sMsrp*(1-bundle/100):0;
+  var sAfterExtra=(extra>0&&(applyTo==='sub'||applyTo==='both')&&sItems>0)?sAfterBundle*(1-extra/100):sAfterBundle;
+  var oAfterExtra=(extra>0&&(applyTo==='otp'||applyTo==='both')&&oMsrp>0)?oMsrp*(1-extra/100):oMsrp;
+  var sSavings=sMsrp-sAfterExtra; var oSavings=oMsrp-oAfterExtra;
+  var sEff=sMsrp>0?(sSavings/sMsrp*100):0;
 
-  var extraLine=extra>0?'<div class="b-row"><span class="b-label">After additional discount ('+extra+'%)</span><span class="b-val">'+fmt(afterExtra)+'</span></div>':'';
-  var prodLines='';selected.forEach(function(qty,i){prodLines+='<div class="b-row"><span class="b-label">'+products[i].name+(qty>1?' ×'+qty:'')+'</span><span class="b-val">'+fmt(products[i].price*qty)+'</span></div>';});
+  /* Rows */
+  var rows='';
+  if(sItems>0){
+    rows+='<div class="b-section-head">Subscriptions ('+sItems+' item'+(sItems!==1?'s':'')+')</div>';
+    rows+='<div class="b-row"><span class="b-label">MSRP</span><span class="b-val">'+fmt(sMsrp)+'</span></div>';
+    rows+='<div class="b-row"><span class="b-label">After bundle discount ('+bundle+'%)</span><span class="b-val">'+fmt(sAfterBundle)+'</span></div>';
+    if(extra>0&&(applyTo==='sub'||applyTo==='both'))rows+='<div class="b-row"><span class="b-label">After promo code ('+extra+'%)</span><span class="b-val">'+fmt(sAfterExtra)+'</span></div>';
+    rows+='<div class="b-row b-sub-total"><span class="b-label">Subscriptions subtotal</span><span class="b-val">'+fmt(sAfterExtra)+'</span></div>';
+  }
+  if(oMsrp>0){
+    if(sItems>0)rows+='<div class="b-divider"></div>';
+    rows+='<div class="b-section-head">One-time purchases</div>';
+    rows+='<div class="b-row"><span class="b-label">MSRP</span><span class="b-val">'+fmt(oMsrp)+'</span></div>';
+    if(extra>0&&(applyTo==='otp'||applyTo==='both'))rows+='<div class="b-row"><span class="b-label">After promo code ('+extra+'%)</span><span class="b-val">'+fmt(oAfterExtra)+'</span></div>';
+    rows+='<div class="b-row b-otp-total"><span class="b-label">One-time subtotal</span><span class="b-val">'+fmt(oAfterExtra)+'</span></div>';
+  }
+  if(sItems>0&&oMsrp>0){rows+='<div class="b-divider"></div>';rows+='<div class="b-row b-final"><span class="b-label">Grand total</span><span class="b-val">'+fmt(sAfterExtra+oAfterExtra)+'</span></div>';}
+  rows+='<div class="b-row b-final"><span class="b-label">Total you save</span><span class="b-val">'+fmt(sSavings+oSavings)+'</span></div>';
 
-  /* Build next-tier card */
+  /* Product lines */
+  var prodLines=''; items.forEach(function(v,i){
+    if(v.sub>0)prodLines+='<div class="b-row"><span class="b-label">'+products[i].name+(v.sub>1?' ×'+v.sub:'')+' <span style="font-size:0.6rem;background:var(--sage-light);color:var(--sage-dark);padding:1px 5px;border-radius:3px;">sub</span></span><span class="b-val">'+fmt(products[i].price*v.sub)+'</span></div>';
+    if(v.otp>0)prodLines+='<div class="b-row"><span class="b-label">'+products[i].name+(v.otp>1?' ×'+v.otp:'')+' <span style="font-size:0.6rem;background:var(--blue-light);color:var(--blue-text);padding:1px 5px;border-radius:3px;">otp</span></span><span class="b-val">'+fmt(products[i].price*v.otp)+'</span></div>';
+  });
+
+  /* Next tier */
   var nextCard='';
-  if(items>=5){
-    nextCard='<div class="result-card"><div class="at-max">★ You\'re already at the maximum bundle tier (30% off)</div></div>';
-  } else {
-    var nextItems=items+1;
-    var nextBundle=bundleRate(nextItems);
+  if(sItems>=5){
+    nextCard='<div class="result-card"><div class="at-max">★ Maximum bundle tier reached (30% off subscriptions)</div></div>';
+  } else if(sItems>0){
+    var nextItems=sItems+1; var nextBundle=bundleRate(nextItems);
     var tierLabels=['','10%','15%','20%','25%','30%'];
-
-    /* Build dropdown of unselected products (or all if nothing selected yet) */
     var opts='<option value="">— pick a product —</option>';
-    products.forEach(function(p,i){
-      /* show all unselected products as options */
-      if(!selected.has(i)){
-        var sel2=(nextProductIndex===i)?'selected':'';
-        opts+='<option value="'+i+'" '+sel2+'>'+p.name+' ($'+p.price+')</option>';
-      }
+    products.forEach(function(p,idx){
+      var s=(nextProductIndex===idx)?'selected':'';
+      opts+='<option value="'+idx+'" '+s+'>'+p.name+' ($'+p.price+')</option>';
     });
-
-    /* If next product chosen, show only that product's discounted price at next tier */
     var previewHtml='';
-    if(nextProductIndex!==null&&!selected.has(nextProductIndex)){
-      var addedPrice=products[nextProductIndex].price;
-      var newBundle=bundleRate(nextItems);
-      /* Price of just that one product at the next bundle tier + extra discount */
-      var productAfterBundle=addedPrice*(1-newBundle/100);
-      var productFinal=extra>0?productAfterBundle*(1-extra/100):productAfterBundle;
-      var productSavings=addedPrice-productFinal;
-      var productEffective=(productSavings/addedPrice*100);
-
-      previewHtml=
-        '<div class="next-breakdown">'
-          +'<div class="next-b-row"><span class="next-b-label">'+products[nextProductIndex].name+' MSRP</span><span class="next-b-val">'+fmt(addedPrice)+'</span></div>'
-          +'<div class="next-b-row"><span class="next-b-label">After bundle discount ('+newBundle+'%)</span><span class="next-b-val">'+fmt(productAfterBundle)+'</span></div>'
-          +(extra>0?'<div class="next-b-row"><span class="next-b-label">After additional discount ('+extra+'%)</span><span class="next-b-val">'+fmt(productFinal)+'</span></div>':'')
-          +'<div class="next-b-row next-final"><span class="next-b-label">You pay for this product</span><span class="next-b-val">'+fmt(productFinal)+'</span></div>'
-          +'<div class="next-b-row next-final"><span class="next-b-label">You save</span><span class="next-b-val">'+fmt(productSavings)+' ('+fmtPct(productEffective)+')</span></div>'
-        +'</div>';
-    } else if(nextProductIndex!==null&&selected.has(nextProductIndex)){
-      /* Edge case: selected product was added to cart after being picked in dropdown */
-      nextProductIndex=null;
+    if(nextProductIndex!==null){
+      var ap=products[nextProductIndex].price;
+      var pAfterBundle=ap*(1-nextBundle/100);
+      var pFinal=(extra>0&&(applyTo==='sub'||applyTo==='both'))?pAfterBundle*(1-extra/100):pAfterBundle;
+      previewHtml='<div class="next-breakdown">'
+        +'<div class="next-b-row"><span class="next-b-label">'+products[nextProductIndex].name+' MSRP</span><span class="next-b-val">'+fmt(ap)+'</span></div>'
+        +'<div class="next-b-row"><span class="next-b-label">After bundle discount ('+nextBundle+'%)</span><span class="next-b-val">'+fmt(pAfterBundle)+'</span></div>'
+        +((extra>0&&(applyTo==='sub'||applyTo==='both'))?'<div class="next-b-row"><span class="next-b-label">After promo code ('+extra+'%)</span><span class="next-b-val">'+fmt(pFinal)+'</span></div>':'')
+        +'<div class="next-b-row next-final"><span class="next-b-label">You pay for this product</span><span class="next-b-val">'+fmt(pFinal)+'</span></div>'
+        +'<div class="next-b-row next-final"><span class="next-b-label">You save</span><span class="next-b-val">'+fmt(ap-pFinal)+' ('+fmtPct((ap-pFinal)/ap*100)+')</span></div>'
+      +'</div>';
     }
-
-    nextCard='<div class="result-card next-tier">'
-      +'<p class="section-title">Add 1 more item to unlock '+tierLabels[nextItems]+'</p>'
-      +'<div class="next-select-label">Which product would you add?</div>'
-      +'<select class="next-select" onchange="setNextProduct(this.value)">'+opts+'</select>'
-      +previewHtml
-    +'</div>';
+    nextCard='<div class="result-card next-tier"><p class="section-title">Add 1 more sub item to unlock '+tierLabels[nextItems]+'</p><div class="next-select-label">Which product would you add?</div><select class="next-select" onchange="setNextProduct(this.value)">'+opts+'</select>'+previewHtml+'</div>';
   }
 
+  var currLabel=country==='CA'?' CAD':'';
   panel.innerHTML=
-    '<div class="result-card highlight"><p class="section-title">Total effective discount</p><div class="big-number">'+fmtPct(effective)+'</div><div class="big-sublabel">off MSRP · you pay '+fmt(afterExtra)+'</div></div>'
-    +'<div class="result-card"><p class="section-title">Breakdown</p><div class="breakdown-list">'
-      +'<div class="b-row"><span class="b-label">MSRP total</span><span class="b-val">'+fmt(msrp)+'</span></div>'
-      +'<div class="b-row"><span class="b-label">After bundle discount ('+bundle+'%)</span><span class="b-val">'+fmt(afterBundle)+'</span></div>'
-      +extraLine
-      +'<div class="b-row b-final"><span class="b-label">You save</span><span class="b-val">'+fmt(savings)+'</span></div>'
-    +'</div><p class="calc-note">Bundle tier is based on total item quantity. Discount applies to subscription items only.</p></div>'
+    '<div class="result-card highlight"><p class="section-title">Subscription effective discount</p><div class="big-number">'+(sItems>0?fmtPct(sEff):'—')+'</div><div class="big-sublabel">'+(sItems>0?'off subscription MSRP'+currLabel+' · you pay '+fmt(sAfterExtra):'No subscriptions added yet')+'</div></div>'
+    +'<div class="result-card"><p class="section-title">Breakdown</p><div class="breakdown-list">'+rows+'</div><p class="calc-note">Bundle discount applies to subscription items only. OTP items only receive the promo code if "applies to" includes them.'+(country==='CA'?' Prices in CAD.':'')+'</p></div>'
     +nextCard
-    +'<div class="result-card"><p class="section-title">Selected products</p><div class="breakdown-list">'+prodLines+'</div></div>';
+    +(prodLines?'<div class="result-card"><p class="section-title">Cart</p><div class="breakdown-list">'+prodLines+'</div></div>':'');
 }
 
 renderProducts();
