@@ -6,7 +6,7 @@
 <title>Arise Discount Calculator — Cymbiotika</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-  :root{--cream:#F7F4EF;--sage:#8A9E8A;--sage-light:#EDF2ED;--sage-dark:#4A6741;--charcoal:#2C2C2A;--muted:#8A8880;--border:#E0DDD7;--white:#FFFFFF;--gold:#B8975A;--gold-light:#F7F1E8;--gold-border:#D4AC6E;--blue:#5B7FBB;--blue-light:#E8EEFF;--blue-border:#8AA3CC;--blue-text:#3B5A99;}
+  :root{--cream:#F7F4EF;--sage:#8A9E8A;--sage-light:#EDF2ED;--sage-dark:#4A6741;--charcoal:#2C2C2A;--muted:#8A8880;--border:#E0DDD7;--white:#FFFFFF;--gold:#B8975A;--gold-light:#F7F1E8;--gold-border:#D4AC6E;--blue-light:#E8EEFF;--blue-border:#8AA3CC;--blue-text:#3B5A99;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;padding:2rem 1rem 4rem;}
   .page-wrap{max-width:920px;margin:0 auto;}
@@ -35,9 +35,8 @@
   .select-actions{display:flex;gap:8px;margin-bottom:0.75rem;}
   .action-btn{font-size:0.7rem;color:var(--sage-dark);background:none;border:1px solid var(--sage);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;}
   .action-btn:hover{background:var(--sage-light);}
-  .product-list{max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
+  .product-list{max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
   .product-list::-webkit-scrollbar{width:4px;} .product-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
   .product-item{display:grid;grid-template-columns:18px 1fr auto auto;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);transition:background 0.1s;}
   .product-item:last-child{border-bottom:none;} .product-item:hover{background:var(--cream);}
   .product-item.has-selection{background:#FAFCFA;}
@@ -45,38 +44,43 @@
   .product-item.has-selection .product-check{background:var(--sage);border-color:var(--sage);}
   .product-name{font-size:0.75rem;color:var(--charcoal);line-height:1.3;cursor:pointer;}
   .dual-qty{display:flex;gap:6px;align-items:center;}
-  .qty-group{display:flex;align-items:center;gap:0;}
+  .qty-group{display:flex;align-items:center;}
   .qty-group-label{font-size:0.62rem;font-weight:500;padding:2px 5px;border-radius:4px 0 0 4px;border:1px solid var(--border);border-right:none;white-space:nowrap;line-height:1.6;}
   .qty-group-label.sub-label{background:var(--sage-light);color:var(--sage-dark);border-color:var(--sage);}
   .qty-group-label.otp-label{background:var(--blue-light);color:var(--blue-text);border-color:var(--blue-border);}
   .qty-inner{display:flex;align-items:center;border:1px solid var(--border);border-radius:0 4px 4px 0;}
-  .qty-group-label.sub-label ~ .qty-inner{border-color:var(--sage);}
-  .qty-group-label.otp-label ~ .qty-inner{border-color:var(--blue-border);}
-  .qty-btn{width:20px;height:22px;border:none;background:transparent;color:var(--muted);font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:'DM Sans',sans-serif;transition:all 0.1s;}
+  .qty-group-label.sub-label~.qty-inner{border-color:var(--sage);}
+  .qty-group-label.otp-label~.qty-inner{border-color:var(--blue-border);}
+  .qty-btn{width:20px;height:22px;border:none;background:transparent;color:var(--muted);font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:'DM Sans',sans-serif;}
   .qty-btn:hover{background:var(--cream);color:var(--charcoal);}
   .qty-num{font-size:0.75rem;font-weight:500;color:var(--charcoal);min-width:18px;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border);height:22px;display:flex;align-items:center;justify-content:center;}
   .qty-num.zero{color:var(--muted);}
-  .product-price{font-size:0.72rem;font-weight:500;color:var(--muted);white-space:nowrap;text-align:right;}
+  .product-price{font-size:0.72rem;font-weight:500;color:var(--muted);text-align:right;}
   .product-item.has-selection .product-price{color:var(--sage-dark);}
   .col-header{display:grid;grid-template-columns:18px 1fr auto auto;gap:8px;padding:5px 10px 4px;border-bottom:1px solid var(--border);}
   .col-header span{font-size:0.62rem;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);}
-  .col-header .col-qty{display:flex;gap:6px;}
-  .col-header .col-sub{color:var(--sage-dark);} .col-header .col-otp{color:var(--blue-text);}
+  .col-qty{display:flex;gap:6px;} .col-sub{color:var(--sage-dark);} .col-otp{color:var(--blue-text);}
   .no-results{padding:1.5rem;text-align:center;font-size:0.78rem;color:var(--muted);}
-
-  .extra-wrap{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);}
-  .extra-hint{font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.5;}
-  .extra-pct-row{display:flex;align-items:center;gap:8px;margin-bottom:0.875rem;}
-  .extra-input-wrap{position:relative;flex:1;}
-  .extra-input-wrap input{width:100%;padding:9px 28px 9px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:var(--charcoal);background:var(--cream);outline:none;transition:border-color 0.15s;}
-  .extra-input-wrap input:focus{border-color:var(--sage);}
-  .extra-pct{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0.8rem;color:var(--muted);pointer-events:none;}
-  .apply-to-label{font-size:0.68rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.5rem;}
-  .apply-to-row{display:flex;gap:8px;}
-  .apply-btn{flex:1;padding:7px 8px;border:1px solid var(--border);border-radius:8px;background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.15s;}
-  .apply-btn:hover{border-color:var(--sage);}
-  .apply-btn.active{background:var(--sage-light);border-color:var(--sage);color:var(--sage-dark);}
-
+  .codes-wrap{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);}
+  .codes-hint{font-size:0.72rem;color:var(--muted);margin-bottom:0.875rem;line-height:1.5;}
+  .code-list{display:flex;flex-direction:column;gap:8px;margin-bottom:0.75rem;}
+  .code-row{display:grid;grid-template-columns:1fr 64px auto auto;gap:6px;align-items:center;background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
+  .code-row input[type=text]{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:var(--charcoal);outline:none;width:100%;}
+  .code-pct-wrap{position:relative;}
+  .code-pct-wrap input[type=number]{width:100%;padding:4px 20px 4px 8px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;color:var(--charcoal);background:var(--white);outline:none;text-align:right;}
+  .code-pct-wrap input[type=number]:focus{border-color:var(--sage);}
+  .code-pct-sym{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:0.72rem;color:var(--muted);pointer-events:none;}
+  .apply-chips{display:flex;gap:3px;}
+  .apply-chip{font-size:0.62rem;font-weight:500;padding:3px 7px;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--white);color:var(--muted);transition:all 0.12s;white-space:nowrap;}
+  .apply-chip.active-sub{background:var(--sage-light);border-color:var(--sage);color:var(--sage-dark);}
+  .apply-chip.active-otp{background:var(--blue-light);border-color:var(--blue-border);color:var(--blue-text);}
+  .apply-chip.active-both{background:var(--sage-light);border-color:var(--sage);color:var(--sage-dark);}
+  .remove-btn{width:22px;height:22px;border:1px solid var(--border);border-radius:5px;background:var(--white);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.85rem;line-height:1;flex-shrink:0;transition:all 0.1s;}
+  .remove-btn:hover{border-color:#C0392B;color:#C0392B;background:#FDF0EF;}
+  .add-code-btn{width:100%;padding:8px;border:1px dashed var(--sage);border-radius:8px;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.75rem;color:var(--sage-dark);cursor:pointer;transition:all 0.15s;}
+  .add-code-btn:hover{background:var(--sage-light);}
+  .code-label-row{display:grid;grid-template-columns:1fr 64px auto auto;gap:6px;padding:0 2px;margin-bottom:3px;}
+  .code-label-row span{font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);}
   .results-panel{display:flex;flex-direction:column;gap:1rem;position:sticky;top:1.5rem;}
   .result-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
   .result-card.highlight{background:var(--sage-dark);border-color:var(--sage-dark);}
@@ -104,7 +108,7 @@
 <div class="page-wrap">
   <header>
     <h1>Arise Discount Calculator</h1>
-    <p>Set subscription and one-time quantities per product — all discounts calculated automatically</p>
+    <p>Loyalty tier + bundle + multiple promo codes — all stacked sequentially</p>
   </header>
 
   <div class="country-bar">
@@ -124,40 +128,21 @@
           <button class="tier-btn active" onclick="setTier(20,this)"><span class="t-name">VIP</span><span class="t-sub">+20% off</span></button>
         </div>
       </div>
-
       <div class="section-gap">
         <p class="section-title">2 — Products <span class="pill" id="countPill">0 selected</span></p>
         <div class="search-wrap"><span class="search-icon">&#9906;</span><input type="text" id="searchInput" placeholder="Search products..." oninput="renderProducts()"/></div>
-        <div class="select-actions">
-          <button class="action-btn" onclick="selectAll()">Add all as sub</button>
-          <button class="action-btn" onclick="clearAll()">Clear all</button>
-        </div>
+        <div class="select-actions"><button class="action-btn" onclick="selectAll()">Add all as sub</button><button class="action-btn" onclick="clearAll()">Clear all</button></div>
         <div class="product-list">
-          <div class="col-header">
-            <span></span><span>Product</span>
-            <div class="col-qty"><span class="col-sub">Sub qty</span><span class="col-otp">OTP qty</span></div>
-            <span>MSRP</span>
-          </div>
+          <div class="col-header"><span></span><span>Product</span><div class="col-qty"><span class="col-sub">Sub</span><span class="col-otp">OTP</span></div><span>MSRP</span></div>
           <div id="productList"></div>
         </div>
       </div>
-
-      <div class="extra-wrap">
-        <p class="section-title">3 — Additional promo code (optional)</p>
-        <p class="extra-hint">e.g. BRECKA20, SAVE20APR — applied after bundle and loyalty discounts</p>
-        <div class="extra-pct-row">
-          <div class="extra-input-wrap">
-            <input type="number" id="extraDiscount" min="0" max="100" step="1" placeholder="0" oninput="calculate()" onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--border)'"/>
-            <span class="extra-pct">%</span>
-          </div>
-          <button class="action-btn" onclick="document.getElementById('extraDiscount').value='';calculate();">Clear</button>
-        </div>
-        <p class="apply-to-label">Applies to</p>
-        <div class="apply-to-row">
-          <button class="apply-btn active" id="applysubBtn" onclick="setApply('sub')">Subscriptions only</button>
-          <button class="apply-btn" id="applyotpBtn" onclick="setApply('otp')">One-time only</button>
-          <button class="apply-btn" id="applybothBtn" onclick="setApply('both')">Both</button>
-        </div>
+      <div class="codes-wrap">
+        <p class="section-title">3 — Promo codes</p>
+        <p class="codes-hint">Add one or more codes. They stack sequentially, applied after bundle and loyalty discounts.</p>
+        <div class="code-label-row"><span>Code name</span><span>% off</span><span>Applies to</span><span></span></div>
+        <div class="code-list" id="codeList"></div>
+        <button class="add-code-btn" onclick="addCode()">+ Add promo code</button>
       </div>
     </div>
 
@@ -169,11 +154,11 @@
 
 <script>
 var productsUS=[{name:"Liposomal NAD+",price:77},{name:"Shilajit Liquid Complex",price:66},{name:"Irish Sea Moss",price:65},{name:"Liquid Colostrum",price:88},{name:"Liposomal Elderberry",price:48},{name:"Liposomal Magnesium Complex",price:68},{name:"Liposomal Glutathione",price:88},{name:"Liposomal Vitamin C",price:62},{name:"Liposomal Brain Complex",price:62},{name:"Liposomal Vitamin D3 + K2 + CoQ10",price:76},{name:"NMN + Trans-Resveratrol",price:77},{name:"Liposomal Advanced Creatine",price:65},{name:"Liposomal Vitamin B12 + B6",price:52},{name:"Mineral Shilajit",price:67},{name:"Metabolic Health",price:66},{name:"Probiotic",price:89},{name:"ParaX™",price:92},{name:"Inflammatory Health",price:74},{name:"The Omega",price:72},{name:"Super Greens",price:78},{name:"Topical Magnesium Oil Spray",price:36},{name:"Liposomal Sleep",price:38},{name:"Liver Health+",price:48},{name:"Organic Matcha Powder",price:44},{name:"Molecular Hydrogen",price:32}];
-var productsCA=[{name:"Liposomal Glutathione",price:115},{name:"Liposomal Magnesium L-Threonate",price:89},{name:"Liposomal Vitamin C",price:81},{name:"Liquid Colostrum",price:115},{name:"Liposomal Elderberry",price:63},{name:"Liposomal Vitamin D3 + K2 + CoQ10",price:101},{name:"Irish Sea Moss",price:85},{name:"Shilajit Liquid Complex",price:86},{name:"Metabolic Health",price:86},{name:"Liposomal Vitamin B12 + B6",price:63},{name:"ParaX™",price:120},{name:"Golden Mind",price:81},{name:"Mineral Shilajit",price:88},{name:"Liposomal Longevity Mushrooms",price:79},{name:"Molecular Hydrogen",price:42},{name:"Topical Magnesium Oil Spray",price:47},{name:"Liposomal Advanced Creatine",price:85},{name:"Liver Health+",price:63},{name:"Liposomal Sleep",price:50},{name:"NMN + Trans-Resveratrol",price:101},{name:"Inflammatory Health",price:97},{name:"Probiotic",price:116},{name:"Super Greens",price:102},{name:"The Omega",price:94},{name:"Liposomal Brain Complex",price:87}];
+var productsCA=[{name:"Liposomal Glutathione",price:114},{name:"Liposomal Magnesium L-Threonate",price:88},{name:"Liposomal Vitamin C",price:80},{name:"Liquid Colostrum",price:114},{name:"Liposomal Elderberry",price:62},{name:"Liposomal Vitamin D3 + K2 + CoQ10",price:99},{name:"Irish Sea Moss",price:84},{name:"Shilajit Liquid Complex",price:144},{name:"Metabolic Health",price:100},{name:"Liposomal Vitamin B12 + B6",price:62},{name:"ParaX™",price:119},{name:"Golden Mind",price:95},{name:"Mineral Shilajit",price:87},{name:"Liposomal Longevity Mushrooms",price:79},{name:"Molecular Hydrogen",price:42},{name:"Topical Magnesium Oil Spray",price:47},{name:"Liposomal Advanced Creatine",price:84},{name:"Liver Health+",price:62},{name:"Liposomal Sleep",price:50},{name:"NMN + Trans-Resveratrol",price:100},{name:"Inflammatory Health",price:96},{name:"Probiotic",price:115},{name:"Super Greens",price:104},{name:"The Omega",price:93},{name:"Liposomal Brain Complex",price:89}];
 
 var country='US'; var products=productsUS;
-var items=new Map(); /* Map<index, {sub, otp}> */
-var filteredIndices=[]; var tierDiscount=20; var applyTo='sub';
+var items=new Map(); var filteredIndices=[]; var tierDiscount=20;
+var codes=[]; var codeIdCounter=0;
 
 function switchCountry(c){country=c;products=(c==='CA')?productsCA:productsUS;items.clear();document.getElementById('btnUS').classList.toggle('active',c==='US');document.getElementById('btnCA').classList.toggle('active',c==='CA');document.getElementById('caNote').style.display=c==='CA'?'block':'none';document.getElementById('searchInput').value='';renderProducts();}
 function bundleRate(n){return n>=5?30:n===4?25:n===3?20:n===2?15:n===1?10:0;}
@@ -183,19 +168,28 @@ function totalSub(){var t=0;items.forEach(function(v){t+=v.sub;});return t;}
 function subMsrp(){var m=0;items.forEach(function(v,i){m+=products[i].price*v.sub;});return m;}
 function otpMsrp(){var m=0;items.forEach(function(v,i){m+=products[i].price*v.otp;});return m;}
 function getItem(i){return items.has(i)?items.get(i):{sub:0,otp:0};}
-
 function setTier(t,btn){tierDiscount=t;document.querySelectorAll('.tier-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');calculate();}
-function setApply(mode){applyTo=mode;['sub','otp','both'].forEach(function(m){document.getElementById('apply'+m+'Btn').classList.toggle('active',m===mode);});calculate();}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function changeQty(i,type,delta){
-  var v=getItem(i);
-  v[type]=Math.max(0,v[type]+delta);
-  if(v.sub===0&&v.otp===0){items.delete(i);}else{items.set(i,v);}
-  renderProducts();
+function addCode(){var id=codeIdCounter++;codes.push({id:id,name:'',pct:0,apply:'both'});renderCodes();}
+function removeCode(id){codes=codes.filter(function(c){return c.id!==id;});renderCodes();calculate();}
+function updateCode(id,field,value){var c=codes.find(function(c){return c.id===id;});if(c){c[field]=value;}calculate();}
+function cycleApply(id){var c=codes.find(function(c){return c.id===id;});if(!c)return;c.apply=c.apply==='sub'?'otp':c.apply==='otp'?'both':'sub';renderCodes();calculate();}
+
+function renderCodes(){
+  var html='';
+  codes.forEach(function(c){
+    var chipClass=c.apply==='sub'?'active-sub':c.apply==='otp'?'active-otp':'active-both';
+    var chipLabel=c.apply==='sub'?'Sub only':c.apply==='otp'?'OTP only':'Both';
+    html+='<div class="code-row">'
+      +'<input type="text" placeholder="e.g. BRECKA20" value="'+escHtml(c.name)+'" oninput="updateCode('+c.id+',\'name\',this.value)" />'
+      +'<div class="code-pct-wrap"><input type="number" min="0" max="100" step="1" value="'+(c.pct||'')+'" placeholder="0" oninput="updateCode('+c.id+',\'pct\',parseFloat(this.value)||0)" /><span class="code-pct-sym">%</span></div>'
+      +'<div class="apply-chips"><button class="apply-chip '+chipClass+'" onclick="cycleApply('+c.id+')" title="Click to cycle: Sub → OTP → Both">'+chipLabel+'</button></div>'
+      +'<button class="remove-btn" onclick="removeCode('+c.id+')" title="Remove">×</button>'
+    +'</div>';
+  });
+  document.getElementById('codeList').innerHTML=html;
 }
-function toggleRow(i){if(items.has(i)&&getItem(i).sub===0&&getItem(i).otp===0){items.delete(i);}else if(!items.has(i)){items.set(i,{sub:1,otp:0});}else{items.delete(i);}renderProducts();}
-function selectAll(){filteredIndices.forEach(function(i){if(!items.has(i))items.set(i,{sub:1,otp:0});});renderProducts();}
-function clearAll(){items.clear();renderProducts();}
 
 function renderProducts(){
   var query=document.getElementById('searchInput').value.toLowerCase();
@@ -220,20 +214,38 @@ function renderProducts(){
   calculate();
 }
 
+function toggleRow(i){if(items.has(i)){items.delete(i);}else{items.set(i,{sub:1,otp:0});}renderProducts();}
+function changeQty(i,type,delta){var v=getItem(i);v[type]=Math.max(0,v[type]+delta);if(v.sub===0&&v.otp===0){items.delete(i);}else{items.set(i,v);}renderProducts();}
+function selectAll(){filteredIndices.forEach(function(i){if(!items.has(i))items.set(i,{sub:1,otp:0});});renderProducts();}
+function clearAll(){items.clear();renderProducts();}
+
+function applyCodesSequentially(sAmt, oAmt){
+  var sCur=sAmt; var oCur=oAmt; var rows=[];
+  codes.forEach(function(c){
+    if(!c.pct||c.pct<=0)return;
+    var pct=Math.min(Math.max(c.pct,0),100);
+    var label=(c.name||'Promo code')+' ('+fmtPct(pct)+')';
+    if(c.apply==='sub'||c.apply==='both')sCur=sCur*(1-pct/100);
+    if(c.apply==='otp'||c.apply==='both')oCur=oCur*(1-pct/100);
+    var tag=c.apply==='sub'?'sub only':c.apply==='otp'?'otp only':'sub + otp';
+    rows.push({label:label+' ['+tag+']',sVal:sCur,oVal:oCur});
+  });
+  return{sub:sCur,otp:oCur,rows:rows};
+}
+
 function calculate(){
   var sItems=totalSub(); var sMsrp=subMsrp(); var oMsrp=otpMsrp();
   var panel=document.getElementById('resultsPanel');
-  var hasAny=sItems>0||oMsrp>0;
-  if(!hasAny){panel.innerHTML='<div class="result-card"><div class="empty-state"><div class="empty-icon">◎</div><p>Select a loyalty tier and add quantities to see your full discount</p></div></div>';return;}
+  if(sItems===0&&oMsrp===0){panel.innerHTML='<div class="result-card"><div class="empty-state"><div class="empty-icon">◎</div><p>Select a loyalty tier and add quantities to see your full discount</p></div></div>';return;}
 
-  var extra=Math.min(Math.max(parseFloat(document.getElementById('extraDiscount').value)||0,0),100);
   var bundle=bundleRate(sItems);
   var sAfterBundle=sItems>0?sMsrp*(1-bundle/100):0;
   var sAfterLoyalty=sItems>0&&tierDiscount>0?sAfterBundle*(1-tierDiscount/100):sAfterBundle;
-  var sAfterExtra=(extra>0&&(applyTo==='sub'||applyTo==='both')&&sItems>0)?sAfterLoyalty*(1-extra/100):sAfterLoyalty;
   var oAfterLoyalty=oMsrp>0&&tierDiscount>0?oMsrp*(1-tierDiscount/100):oMsrp;
-  var oAfterExtra=(extra>0&&(applyTo==='otp'||applyTo==='both')&&oMsrp>0)?oAfterLoyalty*(1-extra/100):oAfterLoyalty;
-  var sSavings=sMsrp-sAfterExtra; var oSavings=oMsrp-oAfterExtra;
+
+  var codesResult=applyCodesSequentially(sAfterLoyalty, oAfterLoyalty);
+  var sFinal=codesResult.sub; var oFinal=codesResult.otp;
+  var sSavings=sMsrp-sFinal; var oSavings=oMsrp-oFinal;
   var sEff=sMsrp>0?(sSavings/sMsrp*100):0;
   var tierLabel=['Member','Insider','Elite','VIP'][[0,10,15,20].indexOf(tierDiscount)]||'VIP';
 
@@ -243,18 +255,18 @@ function calculate(){
     rows+='<div class="b-row"><span class="b-label">MSRP</span><span class="b-val">'+fmt(sMsrp)+'</span></div>';
     rows+='<div class="b-row"><span class="b-label">After bundle discount ('+bundle+'%)</span><span class="b-val">'+fmt(sAfterBundle)+'</span></div>';
     if(tierDiscount>0)rows+='<div class="b-row"><span class="b-label">After loyalty discount ('+tierLabel+' · '+tierDiscount+'%)</span><span class="b-val">'+fmt(sAfterLoyalty)+'</span></div>';
-    if(extra>0&&(applyTo==='sub'||applyTo==='both'))rows+='<div class="b-row"><span class="b-label">After promo code ('+extra+'%)</span><span class="b-val">'+fmt(sAfterExtra)+'</span></div>';
-    rows+='<div class="b-row b-sub-total"><span class="b-label">Subscriptions subtotal</span><span class="b-val">'+fmt(sAfterExtra)+'</span></div>';
+    codesResult.rows.forEach(function(r){rows+='<div class="b-row"><span class="b-label">After '+r.label+'</span><span class="b-val">'+fmt(r.sVal)+'</span></div>';});
+    rows+='<div class="b-row b-sub-total"><span class="b-label">Subscriptions subtotal</span><span class="b-val">'+fmt(sFinal)+'</span></div>';
   }
   if(oMsrp>0){
     if(sItems>0)rows+='<div class="b-divider"></div>';
     rows+='<div class="b-section-head">One-time purchases</div>';
     rows+='<div class="b-row"><span class="b-label">MSRP</span><span class="b-val">'+fmt(oMsrp)+'</span></div>';
     if(tierDiscount>0)rows+='<div class="b-row"><span class="b-label">After loyalty discount ('+tierLabel+' · '+tierDiscount+'%)</span><span class="b-val">'+fmt(oAfterLoyalty)+'</span></div>';
-    if(extra>0&&(applyTo==='otp'||applyTo==='both'))rows+='<div class="b-row"><span class="b-label">After promo code ('+extra+'%)</span><span class="b-val">'+fmt(oAfterExtra)+'</span></div>';
-    rows+='<div class="b-row b-otp-total"><span class="b-label">One-time subtotal</span><span class="b-val">'+fmt(oAfterExtra)+'</span></div>';
+    codesResult.rows.forEach(function(r){rows+='<div class="b-row"><span class="b-label">After '+r.label+'</span><span class="b-val">'+fmt(r.oVal)+'</span></div>';});
+    rows+='<div class="b-row b-otp-total"><span class="b-label">One-time subtotal</span><span class="b-val">'+fmt(oFinal)+'</span></div>';
   }
-  if(sItems>0&&oMsrp>0){rows+='<div class="b-divider"></div>';rows+='<div class="b-row b-final"><span class="b-label">Grand total</span><span class="b-val">'+fmt(sAfterExtra+oAfterExtra)+'</span></div>';}
+  if(sItems>0&&oMsrp>0){rows+='<div class="b-divider"></div>';rows+='<div class="b-row b-final"><span class="b-label">Grand total</span><span class="b-val">'+fmt(sFinal+oFinal)+'</span></div>';}
   rows+='<div class="b-row b-final"><span class="b-label">Total you save</span><span class="b-val">'+fmt(sSavings+oSavings)+'</span></div>';
 
   var prodLines=''; items.forEach(function(v,i){
@@ -264,12 +276,13 @@ function calculate(){
 
   var currLabel=country==='CA'?' CAD':'';
   panel.innerHTML=
-    '<div class="result-card highlight"><p class="section-title">Subscription effective discount</p><div class="big-number">'+(sItems>0?fmtPct(sEff):'—')+'</div><div class="big-sublabel">'+(sItems>0?'off subscription MSRP'+currLabel+' · you pay '+fmt(sAfterExtra):'No subscriptions added yet')+'</div></div>'
-    +'<div class="result-card"><p class="section-title">Breakdown</p><div class="breakdown-list">'+rows+'</div><p class="calc-note">Bundle discount applies to subscription items only. Loyalty tier discount applies to both subscriptions and one-time purchases. OTP items only receive the promo code if "applies to" includes them.'+(country==='CA'?' Prices in CAD.':'')+'</p></div>'
+    '<div class="result-card highlight"><p class="section-title">Subscription effective discount</p><div class="big-number">'+(sItems>0?fmtPct(sEff):'—')+'</div><div class="big-sublabel">'+(sItems>0?'off subscription MSRP'+currLabel+' · you pay '+fmt(sFinal):'No subscriptions added yet')+'</div></div>'
+    +'<div class="result-card"><p class="section-title">Breakdown</p><div class="breakdown-list">'+rows+'</div><p class="calc-note">Bundle discount: sub only. Loyalty discount: sub + otp. Promo codes: applied per code setting. All stack sequentially.'+(country==='CA'?' Prices in CAD.':'')+'</p></div>'
     +(prodLines?'<div class="result-card"><p class="section-title">Cart</p><div class="breakdown-list">'+prodLines+'</div></div>':'');
 }
 
 renderProducts();
+renderCodes();
 </script>
 </body>
 </html>
